@@ -1,0 +1,36 @@
+---
+title: "Poisson Regression for Lottery Data"
+author: "Stephen Penrice"
+date: "Friday, May 29, 2015"
+output: html_document
+---
+
+This document presents a quick example of how Poisson regression can be applied 
+to lottery data.
+
+In a world where lottery players choose their numbers randomly, the Poisson
+distribution can be used to model the number of winners, because in this case
+the requirements for using the Poisson approximation to the binomial are
+satisified: the number of trials is high and the probability of success is
+low. The expected number of winners at a given prize level is simply the number
+of players times the probability of achieving the number of matches for that
+level.
+
+However, lottery players do not select their numbers randomly. For example, they
+often choose family members' birthdays, which means numbers less than or equal 
+to 31 get selected disproportionately often and numbers less than or equal to 12
+even more so. Data documenting these tendencies are not readily available, but I
+have collected data on the Texas Lottery's Cash 5 game that include, for each
+drawing from 2012 to 2014, the net sales (i.e. the number of players), the 
+numbers selected in the draw, and the number of winners at each prize level. 
+This data set can be used to model the proportion of players who win a given
+prize as a function of the numbers drawn.
+
+As a brief illustration, consider the following model, where the sum of the 
+numbers drawn is used to predict the percentage of players who match three numbers.
+
+```{r, echo=TRUE}
+draws <- read.table("tx_cash5.csv",header=TRUE,sep=",")
+model <- glm(winners_3~I(n1+n2+n3+n4+n5),data=draws,family=poisson,offset=log(sales))
+summary(model)
+```
